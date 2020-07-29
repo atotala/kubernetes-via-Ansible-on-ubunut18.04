@@ -15,5 +15,5 @@
   tasks:
 
     - name: join cluster
-      shell : "{{ hostvars['172.31.44.219']['join_command'] }}" 
+      shell : "{{ hostvars['<ip_address 0f master node>']['join_command'] }}" 
       
