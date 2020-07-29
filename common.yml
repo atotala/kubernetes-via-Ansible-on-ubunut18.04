@@ -1,4 +1,4 @@
-- hosts: workers
+- hosts: all
   become: yes
   tasks:
   - name: Install Docker
@@ -27,6 +27,7 @@
     apt_repository:
       repo: deb http://apt.kubernetes.io/ kubernetes-xenail main
       state: present
+    ignore_errors: true
 
 
   - name: disable swap
@@ -54,8 +55,8 @@
 - hosts: master
   become: yes
   tasks:
-          # - name: Initialize the cluster
-          #  shell: kubeadm init --pod-network-cidr=172.168.10.0/24
+    - name: Initialize the cluster
+      shell: kubeadm init --pod-network-cidr=172.168.10.0/24
 
     - name: create .kube directory
       become_user: ubuntu
@@ -71,7 +72,7 @@
         remote_src: yes
         owner: ubuntu
 
-        #    - name: Install pod n/w
-        #      become_user: ubuntu
-        #      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+    - name: Install pod n/w
+      become_user: ubuntu
+      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
