@@ -1,0 +1,77 @@
+- hosts: workers
+  become: yes
+  tasks:
+  - name: Install Docker
+    apt:
+      name: docker.io
+      state: present
+      #update_cache: true
+
+  - name: start docker
+    systemd:
+      name: docker
+      state: started
+      enabled: yes
+
+  - name: Install APT transports HTTPS
+    apt:
+      name: apt-transport-https
+      state: present
+
+  - name: add gpg key
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+
+  - name: add k8s apt repository
+    apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenail main
+      state: present
+
+
+  - name: disable swap
+    shell: | 
+      swapoff -a
+
+  - name: disable swap permannently
+    replace:
+      path: /etc/fstab
+      regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+      replace: '# \1'    
+
+
+  - name: update and upgrade
+    apt:
+      upgrade: yes
+      #      update: yes
+
+  - name: Install kubeadm
+    apt:
+      name: kubeadm
+      state: present
+
+
+- hosts: master
+  become: yes
+  tasks:
+          # - name: Initialize the cluster
+          #  shell: kubeadm init --pod-network-cidr=172.168.10.0/24
+
+    - name: create .kube directory
+      become_user: ubuntu
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+
+    - name: copy admin.conf 
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/ubuntu/.kube/config
+        remote_src: yes
+        owner: ubuntu
+
+        #    - name: Install pod n/w
+        #      become_user: ubuntu
+        #      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
