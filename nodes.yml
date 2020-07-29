@@ -13,7 +13,6 @@
 - hosts: workers
   become: yes
   tasks:
-
     - name: join cluster
       shell : "{{ hostvars['<ip_address 0f master node>']['join_command'] }}" 
       
