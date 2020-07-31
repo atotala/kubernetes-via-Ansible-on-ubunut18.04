@@ -1,6 +1,7 @@
 - hosts: all
   become: yes
   tasks:
+
   - name: Install Docker
     apt:
       name: docker.io
@@ -25,7 +26,7 @@
 
   - name: add k8s apt repository
     apt_repository:
-      repo: deb http://apt.kubernetes.io/ kubernetes-xenail main
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
       state: present
     ignore_errors: true
 

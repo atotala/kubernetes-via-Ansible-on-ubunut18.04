@@ -10,9 +10,9 @@
       set_fact:
         join_command: "{{ join_command_raw.stdout_lines[0] }}"
 
-- hosts: workers
+- hosts: worker
   become: yes
   tasks:
     - name: join cluster
-      shell : "{{ hostvars['<ip_address 0f master node>']['join_command'] }}" 
+      shell : "{{ hostvars['master-1']['join_command'] }}" 
       
